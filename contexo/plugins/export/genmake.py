@@ -41,6 +41,7 @@ import contexo.ctx_sysinfo as ctx_sysinfo
 from contexo.ctx_common import infoMessage, userErrorExit, warningMessage
 import contexo.ctx_cfg as ctx_cfg
 import contexo.ctx_cmod
+import posixpath
 
 # use the same include directories for ALL source files when building
 # however, only export public headers
@@ -243,9 +244,9 @@ for comp in package.export_data['COMPONENTS']:
 
 		for libs in comp.libraries[lib]:
 			for srcFile in modules[libs].getSourceFilenames():
-				objectfiles.append("$(OBJDIR)/" + srcFile[:-2]+".o ")
+				objectfiles.append("$(OBJDIR)/" + posixpath.normpath(srcFile[:-2])+".o ")
 			for testFile in modules[libs].getTestSourceFilenames():
-				objectfiles.append("$(OBJDIR)/" + testFile[:-2]+".o ")
+				objectfiles.append("$(OBJDIR)/" + posixpath.normpath(testFile[:-2])+".o ")
 
 		makefile.write("$(LIBDIR)/"+libfilename+": ")
 		for objfile in objectfiles:

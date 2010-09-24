@@ -21,6 +21,7 @@ import shutil
 import ctx_log
 import ctx_base
 from ctx_common import *
+import posixpath
 
 #
 # In earlier releases of Contexo, a contexo module was defined by a set of
@@ -62,7 +63,7 @@ def resolveModuleLocation( modName, pathlist ):
     new_path   = str()
 
     for path in pathlist:
-        candidate_path = os.path.join( path, modName )
+        candidate_path = posixpath.join( path, modName )
         tried.append(candidate_path)
 
         if os.path.exists(candidate_path):
@@ -89,13 +90,13 @@ def isContexoCodeModule( path ):
 
     numPublicHeaderFiles = 0
     for entry in os.listdir( path ):
-	entrypath = os.path.join( path, entry)
+	entrypath = posixpath.join( path, entry)
 	if os.path.isfile( entrypath ) and ( entrypath.endswith('.h') or entrypath.endswith('.H') ):
 	    numPublicHeaderFiles+=1
 
     numCriteriaDirs = 0
     for d in criteriaDirs:
-	criteriaDirPath = os.path.join( path, d)
+	criteriaDirPath = posixpath.join( path, d)
         if os.path.isfile( criteriaDirPath ):
             userErrorExit("'%s' was found but is not a valid Contexo code module"%(path))
 	    return False
@@ -126,7 +127,7 @@ def getSourcesFromDir( self, srcDir ):
     # Collect all source files.
     dirlist = os.listdir( srcDir )
     for file in dirlist:
-        if os.path.isfile( os.path.join(srcDir, file) ):
+        if os.path.isfile( posixpath.join(srcDir, file) ):
             fileRoot, ext = os.path.splitext( file )
             if source_extensions.count( ext ) != 0:
                 baseFileName = os.path.basename(fileRoot)
@@ -137,19 +138,19 @@ def getSourcesFromDir( self, srcDir ):
     archPathCopy.reverse()
     # override source files with architecture specific files
     arch_spec_source_extensions = [ '.c', '.cpp', '.asm', '.s']
-    arch_srcDir = os.path.join(srcDir, 'arch')
+    arch_srcDir = posixpath.join(srcDir, 'arch')
     for archRelDirBase in archPathCopy:
-        archRelDir = os.path.join(arch_srcDir, archRelDirBase )
+        archRelDir = posixpath.join(arch_srcDir, archRelDirBase )
         if os.path.isdir(archRelDir):
             archDirList = os.listdir( os.path.join(arch_srcDir, archRelDir ))
             for archDirEntry in archDirList:
-                archFile = os.path.join(archRelDir, archDirEntry)
+                archFile = posixpath.join(archRelDir, archDirEntry)
                 if os.path.isfile( archFile ):
                     baseFileName, ext = os.path.splitext( archDirEntry )
                     if arch_spec_source_extensions.count( ext ) != 0:
                         for key in srcListDict.keys():
                             if key == baseFileName:
-                                msg = 'Overriding source file '+os.path.join(srcDir, srcListDict[baseFileName])+' with architecture specific file: '+archFile
+                                msg = 'Overriding source file '+posixpath.join(srcDir, srcListDict[baseFileName])+' with architecture specific file: '+archFile
                                 infoMessage(msg, 1)
                         srcListDict[baseFileName] = archFile[len(srcDir)+1:]
     for file in srcListDict.values():
@@ -225,11 +226,11 @@ class CTXRawCodeModule:
     def getSourceAbsolutePaths(self):
         import functools
         #functional magic - bind an argument to join and map this bound function to filenames
-        return map ( functools.partial( os.path.join,  self.getSourceDir() ),  self.getSourceFilenames() )
+        return map ( functools.partial( posixpath.join,  self.getSourceDir() ),  self.getSourceFilenames() )
 
     def getTestSourceAbsolutePaths(self):
         import functools
-        return map ( functools.partial( os.path.join,  self.getTestDir() ),  self.getTestSourceFilenames() )
+        return map ( functools.partial( posixpath.join,  self.getTestDir() ),  self.getTestSourceFilenames() )
 
     def getTestSourceFilenames(self):
         if len(self.testSrcFiles) == 0:
@@ -250,7 +251,7 @@ class CTXRawCodeModule:
             # Collect all source files.
             dirlist = os.listdir( testHdrDir )
             for file in dirlist:
-                if os.path.isfile( os.path.join(testHdrDir, file) ):
+                if os.path.isfile( posixpath.join(testHdrDir, file) ):
                     root, ext = os.path.splitext( file )
                     if header_extensions.count( ext ) != 0:
                         self.testHeaders.append(file)
@@ -258,7 +259,7 @@ class CTXRawCodeModule:
 
     def getTestHeaderAbsolutePaths(self):
         import functools
-        return map ( functools.partial( os.path.join,  self.getTestDir() ),  self.getTestHeaderFilenames() )
+        return map ( functools.partial( posixpath.join,  self.getTestDir() ),  self.getTestHeaderFilenames() )
 
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getPrivHeaderFilenames(self):
@@ -273,7 +274,7 @@ class CTXRawCodeModule:
             # Collect all source files.
             dirlist = os.listdir( privHdrDir )
             for file in dirlist:
-                if os.path.isfile( os.path.join(privHdrDir, file) ):
+                if os.path.isfile( posixpath.join(privHdrDir, file) ):
                     root, ext = os.path.splitext( file )
                     if header_extensions.count( ext ) != 0:
                         self.privHeaders.append(file)
@@ -281,7 +282,7 @@ class CTXRawCodeModule:
 
     def getPrivHeaderAbsolutePaths(self):
         import functools
-        return map ( functools.partial( os.path.join,  self.getPrivHeaderDir() ),  self.getPrivHeaderFilenames() )
+        return map ( functools.partial( posixpath.join,  self.getPrivHeaderDir() ),  self.getPrivHeaderFilenames() )
 
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getPubHeaderFilenames(self):
@@ -296,7 +297,7 @@ class CTXRawCodeModule:
             # Collect all source files.
             dirlist = os.listdir( pubHdrDir )
             for file in dirlist:
-                if os.path.isfile( os.path.join(pubHdrDir, file) ):
+                if os.path.isfile( posixpath.join(pubHdrDir, file) ):
                     root, ext = os.path.splitext( file )
                     if header_extensions.count( ext ) != 0:
                         self.pubHeaders.append(file)
@@ -304,31 +305,31 @@ class CTXRawCodeModule:
 
     def getPubHeaderAbsolutePaths(self):
         import functools
-        return map ( functools.partial( os.path.join,  self.getPubHeaderDir() ),  self.getPubHeaderFilenames() )
+        return map ( functools.partial( posixpath.join,  self.getPubHeaderDir() ),  self.getPubHeaderFilenames() )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getContexoDir( self ):
-        return os.path.join( self.modRoot, contexo_dirname )
+        return posixpath.join( self.modRoot, contexo_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getSourceDir( self ):
-        return os.path.join( self.modRoot, src_dirname )
+        return posixpath.join( self.modRoot, src_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getTestDir( self ):
-        return os.path.join( self.modRoot, test_dirname )
+        return posixpath.join( self.modRoot, test_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getPrivHeaderDir(self):
-        return os.path.join( self.modRoot, inc_dirname )
+        return posixpath.join( self.modRoot, inc_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getPubHeaderDir(self):
         return self.modRoot
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getDocDir(self):
-        return os.path.join( self.modRoot, doc_dirname )
+        return posixpath.join( self.modRoot, doc_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getOutputDir(self):
-        return os.path.join( self.modRoot, output_dirname )
+        return posixpath.join( self.modRoot, output_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def hasExternalDependencies( self ):
-        xdepends_file = os.path.join( self.getContexoDir(), 'xdepends' )
+        xdepends_file = posixpath.join( self.getContexoDir(), 'xdepends' )
         return os.path.exists( xdepends_file )
 
 #------------------------------------------------------------------------------
@@ -367,7 +368,7 @@ class CTXCodeModule( CTXRawCodeModule ):
         ## Locate external dependencies declaration file, and parse it if found.
         #
 
-        xdep_filepath = os.path.join( self.getContexoDir(), xdep_filename )
+        xdep_filepath = posixpath.join( self.getContexoDir(), xdep_filename )
 
         if os.path.exists( xdep_filepath ):
             xdep_vars = readLstFile( xdep_filepath )
@@ -440,7 +441,7 @@ class CTXCodeModule( CTXRawCodeModule ):
 
         outputDir = self.getOutputDir()
         if buildDir != None:
-            outputDir = os.path.join( outputDir, buildDir )
+            outputDir = posixpath.join( outputDir, buildDir )
             if not os.path.exists( outputDir ):
                 os.makedirs( outputDir )
 
@@ -481,7 +482,7 @@ class CTXCodeModule( CTXRawCodeModule ):
             if imDir == '.svn':
                 continue
 
-            imPath = os.path.join( outputDir, imDir )
+            imPath = posixpath.join( outputDir, imDir )
 
             if os.path.exists( imPath ):
                 infoMessage("Removing %s"%imPath, 2)
