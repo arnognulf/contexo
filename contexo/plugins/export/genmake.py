@@ -267,6 +267,44 @@ for comp in package.export_data['COMPONENTS']:
 makefile.write("\n")
 makefile.write("### Object definitions\n")
 
+# as per http://support.microsoft.com/kb/830473 winxp and later only support 8191 characters
+def bulk_cmdline( srcFiles):
+	max_len = 0
+	if sys.platform == 'win32':
+		max_len = 8191
+	else:
+		# TODO: very hardcoded, this corresponds to a modern BSD or Linux os.
+		max_len = 2097152
+	line = str()
+	# neither armcc or gcc exceeds 5 chars. TODO: hardcoded, make variable some how.
+	orig_line = "$(CC) " + build_params.cflags + " -c"
+	line = str(orig_line)
+	srces = set()
+	hdrs = set()
+	tmp_hdrs = set()
+	tmp_line = string()
+	for mod in module_map:
+		for hdrdir in mod['DEPHDRS']:
+			hdrs.add(hdrdir)
+			
+		for hdrdir in hdrs:
+			tmp_line += " " + hdrdir
+
+		for srcFile in mod['SOURCES']:
+			tmp_line = str(line)
+			tmp_line += srcFile
+
+			if len(tmp_line) < max_len:
+				line = str(tmp_line)
+			else:
+				# write line to file, begin creation of a new line, clear hdrdirs
+				# note: we need to rebuild headers from *this* module...
+				hdrs = set()
+				line = str(orig_line)
+
+
+
+
 for mod in module_map:
 	for srcFile in mod['SOURCES']:
 		objfile = os.path.basename(srcFile)[:-2]+".o"
