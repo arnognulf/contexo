@@ -209,6 +209,11 @@ class CTXRawCodeModule:
         self.buildUnitTests = buildUnitTests
         self.archPath       = archPath
         self.legacyCompilingMod = legacyCompilingMod
+	# put objects in a common dir, this simplifies cleaning, puts the object files away from the source tree, and makes compiler calling with multiple .c files possible
+        self.objOutputDir   = moduleRoot + '.ctx' + os.sep + 'obj'
+	if os.path.exists(self.objOutputDir) == False:
+		# TODO: create dir if nonexistant
+		print 'no can has'
 
         assert( os.path.isabs(moduleRoot) )
         moduleRoot = os.path.normpath(moduleRoot)
@@ -327,7 +332,7 @@ class CTXRawCodeModule:
     def getContexoDir( self ):
         return os.path.join( self.modRoot, contexo_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    def getSourceDir( self ):
+    def getSourceDir( self )
         return os.path.join( self.modRoot, src_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getTestDir( self ):
@@ -343,7 +348,7 @@ class CTXRawCodeModule:
         return os.path.join( self.modRoot, doc_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getOutputDir(self):
-        return os.path.join( self.modRoot, output_dirname )
+        return self.objOutputDir
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def hasExternalDependencies( self ):
         xdepends_file = os.path.join( self.getContexoDir(), 'xdepends' )
