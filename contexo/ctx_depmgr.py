@@ -178,22 +178,6 @@ def getCachedCodeModulePaths( searchPath ):
     return codeModulePaths
 
 #------------------------------------------------------------------------------
-#def clearCachedPathLists(searchPaths):
-#    global global_path_cache
-#
-#    cacheId = makeCacheId( searcPaths )
-#
-#    if global_path_cache.has_key( cacheId ):
-#        del global_path_cache[cacheId]
-#        print global_path_cache[cacheId]
-#
-#    userDir = getUserDir()
-#
-#    if os.path.exists( userDir ):
-#        p = os.path.join( userDir, makeCacheIdFilename(cacheId) )
-#        os.remove( p )
-
-#------------------------------------------------------------------------------
 
 
 
