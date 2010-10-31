@@ -656,60 +656,6 @@ class CTXBuildSession:
 
         pass
 
-
-#    #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#    def buildStaticObjects( self, srcFiles, outputDir, buildParams, forceRebuild ):
-#        objectFileList = list()
-#        objFileTitle = None
-#
-#        srcFiles = assureList( srcFiles )
-#
-#        joinedBuildParams = CTXBuildParams()
-#        joinedBuildParams.add( self.buildParams )
-#        if buildParams != None:
-#            joinedBuildParams.add( buildParams )
-#
-#        #
-#        # Build
-#        #
-#
-#        buildParamsChecksum = joinedBuildParams.makeChecksum()
-#
-#        for srcFile in srcFiles:
-#            needRebuild     = True
-#
-#            objChecksum     = self.makeStaticObjectChecksum( srcFile, buildParamsChecksum )
-#            objectFilename  = self.compiler.makeObjFileName( srcFile, objFileTitle )
-#
-#            #
-#            # If rebuild detectiobuildStaticObjectsn is to be used, read the old object file checksum
-#            # and see if anything has changed.
-#            #
-#            if forceRebuild == False:
-#                objectFilePath  = os.path.join( outputDir, objectFilename )
-#                oldChecksum     = self.readStaticObjectChecksum( objectFilePath )
-#                if oldChecksum == objChecksum:
-#                    needRebuild = False
-#                    infoMessage("Reusing '%s'"%(objectFilename), 3)
-#                else:
-#                    infoMessage("Object '%s' invalidated by checksum.\nNew: %s\nOld: %s"\
-#                                    %(objectFilename, objChecksum, oldChecksum), 4)
-#
-#                #
-#                # Rebuild if needed, and write the fresh checksum regardless.
-#                #
-#            if needRebuild:
-#                obj = self.compiler.staticObject( srcFile, joinedBuildParams, outputDir, objFileTitle )
-#                objectFileList.append( obj )
-#                self.writeStaticObjectChecksum( os.path.join(obj.filepath,obj.filename), objChecksum )
-#            else:
-#                # Even if wee haven't built the source file we need to produce
-#                # a CTXStaticObject item to return.
-#                obj = self.compiler.wrapStaticObject( srcFile, objectFilename, outputDir, buildParams, "n/a" )
-#                objectFileList.append( obj )
-#
-#        return objectFileList
-
     #
     # Builds a source file and returns a CTXStaticObject.
     #
