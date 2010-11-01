@@ -146,7 +146,7 @@ class COMPFile:
         if cfg.has_section( cur_section ):
             compsec_libraries  = cfg.get_section( cur_section  )
         else:
-            error_output( "Missing mandatory COMP section: %s"%cur_section, 'COMPFile' )
+            errorMessage( "Missing mandatory COMP section: %s"%cur_section, 'COMPFile' )
             ctxExit(1)
 
         cur_section = 'exports'
@@ -172,7 +172,7 @@ class COMPFile:
         if compsec_general.has_key( cur_option ):
             self.name = compsec_general[cur_option]
         else:
-            error_output( "Missing mandatory COMP option: %s"%cur_option, 'COMPFile' )
+            errorMessage( "Missing mandatory COMP option: %s"%cur_option, 'COMPFile' )
             ctxExit(1)
 
         cur_option = 'PUBLIC_HEADERS'

@@ -10,18 +10,12 @@
 #   Defines the foundation classes of the build system.                       #
 #                                                                             #
 ###############################################################################
-#import platform
 import os
 import sys
-#import string
-#import shutil
 import config
-from platform.ctx_platform import *
 from ctx_common import *
 from ctx_log import *
-#import ctx_depmgr
 import hashlib
-#import time
 
 #------------------------------------------------------------------------------
 # \class {CTXBuildParams}
@@ -427,11 +421,8 @@ class CTXCompiler:
         return obj
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    def executeCommandline( commandline ):
-        if os.name == 'nt':
-            infoMessage("Executing: %s"%commandline, 5)
-        else:
-            infoMessage("Executing: %s"%commandline, 5)
+    def executeCommandline(self, commandline ):
+        infoMessage("Executing: %s"%commandline, 5)
         return os.system( commandline )
 
 
@@ -601,6 +592,12 @@ class CTXBuildSession:
             oldChecksum = '0'
 
         return oldChecksum
+
+    #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    def executeCommandline(self, commandline ):
+        infoMessage("Executing: %s"%commandline, 5)
+        return os.system( commandline )
+
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def writeStaticObjectChecksum( self, objectFilename, checksum ):
