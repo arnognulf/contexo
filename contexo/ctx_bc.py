@@ -46,7 +46,9 @@ class BCFile:
         self.compiler        = None
         self.msgSender       = 'BCFile'
         self.archPath        = list()
-        #
+
+        # TODO: hard-coded for now, make configurable (in cdef?)
+        self.bulkBuild       = True
 
         bcFilePaths = assureList( bcFilePaths )
         cdefPaths = assureList( cdefPaths )

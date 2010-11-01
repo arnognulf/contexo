@@ -171,6 +171,12 @@ def build_libraries( ctx_modules, lib_name, output_path, build_dir, session ):
         for mod in ctx_modules:
             libs[mod.getName()] = [mod,]
 
+    # improving round-trip time for licensed compilers over vpn
+    # 1. Accumulate checksums, are they still valid?
+    # 2. build all files as one command
+    # 3. store all checksums
+    # ???
+    # 4. Profit!
     all_objects = list()
     for lib, mods in libs.iteritems():
         ctx_log.ctxlogBeginLibrary( lib )

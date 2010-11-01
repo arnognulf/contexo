@@ -440,6 +440,7 @@ class CTXCodeModule( CTXRawCodeModule ):
         self.rebuildAll = True
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    # TODO: cmod should not know anything about building, only representing source files!!!
     def buildStaticObjects( self, session, buildDir = None ):
         #LOG
         ctx_log.ctxlogBeginCodeModule( self.getName() )
