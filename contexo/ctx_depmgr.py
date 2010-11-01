@@ -231,7 +231,7 @@ class CTXDepMgr: # The dependency manager class.
 
         self.addDependSearchPaths( codeModulePaths )
 
-    def _CTXDepMgr__updateDependencies ( self, inputFileList, pathList):
+    def updateDependencies ( self, inputFileList, pathList):
 #
         inputFilePath       = str()
         incFileList         = list()
@@ -489,27 +489,8 @@ class CTXDepMgr: # The dependency manager class.
         self.checksumMethod = method
         self.needUpdate = True
 
-    # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    #
-    # Returns all include filenames that the input files depend on.
-    #
-#    def _CTXDepMgr__getDependentIncludes ( self, includeFiles, pathList, processedFiles= set()):
-#
-#        for incFile in includeFiles:
-#
-#            if incFile not in self.dependencies:
-#                self.__updateDependencies ( [incFile], pathList  )
-#                ctxAssert ( incFile in self.dependencies, "incFile= " + incFile )
-#
-#            if incFile not in processedFiles:
-#                depIncludes = set ( self.dependencies[incFile][0] )
-#                processedFiles.add ( incFile )
-#                self.__getDependentIncludes ( depIncludes, pathList, processedFiles )
-#
-#        return processedFiles
 
-
-    def _CTXDepMgr__getDependentIncludes ( self, includeFiles, pathList):
+    def getDependentIncludes ( self, includeFiles, pathList):
         processedFiles = set()
         def enclosedRecursion(includeFiles):
             for incFile in includeFiles:
