@@ -10,9 +10,7 @@
 #
 ###############################################################################
 
-from ctx_common import userErrorExit, infoMessage, getUserCfgDir, setInfoMessageVerboseLevel
-import ctx_cfg
-import os
+from ctx_common import userErrorExit, infoMessage
 
 export_header = "$EXPORT_PACKAGE$"
 

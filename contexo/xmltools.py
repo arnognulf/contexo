@@ -1,7 +1,7 @@
 
 from xml.sax import saxutils
 #from xml.sax.saxutils import XMLGenerator
-from xml.sax.xmlreader import AttributesImpl
+#from xml.sax.xmlreader import AttributesImpl
 
 #pretty formatting xml
 

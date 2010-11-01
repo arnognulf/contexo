@@ -19,11 +19,9 @@
 #from xml.sax.handler    import  ContentHandler
 from xml.sax.saxutils import XMLGenerator
 
-from ctx_common         import userErrorExit, warningMessage, infoMessage
-from ctx_common         import getVerboseLevel, ctxAssert, getUserTempDir
+from ctx_common         import warningMessage
 from contexo                import ctx_svn_client
 from contexo                import ctx_git_client
-import os.path
 import sys
 
 

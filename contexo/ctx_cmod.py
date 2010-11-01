@@ -232,6 +232,20 @@ class CTXRawCodeModule:
         self.modName = os.path.basename( self.modRoot );
         ctxAssert( os.path.exists(self.modRoot), 'Module path should be resolved at this point' )
 
+    # TODO: these are the public functions ctx_cmod should provide
+    def getAllSources(self):
+	return list()
+    def getUpdatedSources(self):
+	return list()
+    def getTestSources(self):
+	return list()
+    def getPublicHeaders(self):
+	return list()
+    def getPrivateHeaders(self):
+	return list()
+    def getTestHeaders(self):
+	return list()
+
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getName(self):
         return self.modName
@@ -431,6 +445,7 @@ class CTXCodeModule( CTXRawCodeModule ):
 
         return include_paths
 
+    ###################### DEPRECATED##################################################
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: unused
     def addBuildParams( self, buildParams ):
         self.buildParams.add( buildParams )

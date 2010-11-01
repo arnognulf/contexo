@@ -11,8 +11,8 @@
 #   PySVN/Subversion interface for Contexo                                          #                                                                             #                                                                             #
 ###############################################################################
 
-from ctx_common import ctxAssert, userErrorExit, infoMessage, errorMessage
-import ctx_common
+from ctx_common import ctxAssert, userErrorExit, errorMessage
+#import ctx_common
 import os
 import sys
 import pysvn
@@ -120,7 +120,7 @@ class CTXSubversionClient():
     #--------------------------------------------------------------------------
     def isWorkingCopy( self, local_path ):
         try:
-            entry = self.client.info( local_path )
+            self.client.info( local_path )
         except pysvn.ClientError, e:
             for message, code in e.args[1]:
                 if code in [ERR_NOT_A_WORKING_COPY, ERR_INVALID_ARGUMENT]:
