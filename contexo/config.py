@@ -218,6 +218,7 @@ def parse_file (filename, section_dict):
     concat_line = 0
 
     for line in src_lines:
+        cur_line = str()
         if concat_line:
             cur_line = cur_line + line
         else:

@@ -27,7 +27,6 @@ from contexo import ctx_cfg
 from contexo.ctx_envswitch  import  assureList, EnvironmentLayout, switchEnvironment
 from contexo import ctx_common
 from contexo.ctx_common import setInfoMessageVerboseLevel, infoMessage, userErrorExit, warningMessage, ctxAssert
-from contexo.ctx_comp import ctx_log, COMPFile
 from contexo import ctx_sysinfo
 
 import locale

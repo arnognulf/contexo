@@ -427,6 +427,15 @@ class CTXCompiler:
         return obj
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    def executeCommandline( commandline ):
+        if os.name == 'nt':
+            infoMessage("Executing: %s"%commandline, 5)
+        else:
+            infoMessage("Executing: %s"%commandline, 5)
+        return os.system( commandline )
+
+
+    #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def staticObject( self, sourceFile, buildParams, outputDir, objFileTitle = None ):
         if not os.path.exists( sourceFile ):
             userErrorExit("Sourcefile not found: %s"%sourceFile)
@@ -437,7 +446,7 @@ class CTXCompiler:
         objFileName = self.makeObjFileName( sourceFile, objFileTitle )
         commandline = self.makeStaticObjectCommandline(sourceFile, buildParams, outputDir, objFileName )
 
-        ret = executeCommandline( commandline )
+        ret = self.executeCommandline( commandline )
         if ret != 0:
             userErrorExit("\nFailed to create static object '%s'\nCompiler return code: %d"%(objFileName, ret))
 
@@ -452,7 +461,6 @@ class CTXCompiler:
         objfiles_cmdline = str()
         for objectFile in objectFiles:
             objPath = os.path.normpath(os.path.join(objectFile.filepath, objectFile.filename))
-            objPath = shortenPathIfPossible( objPath )  #TODO: shortenPath is disabled now. Investigate the effects and possibly find out a portable way of doing this.
             objfiles_cmdline += " %s"%objPath
 
         # Prepare library
@@ -489,13 +497,13 @@ class CTXCompiler:
 
             for objectFile in objectFiles:
                 commandline = self.makeStaticLibraryCommandline( [objectFile,], libraryTitle, outputDir )
-                ret = executeCommandline( commandline )
+                ret = self.executeCommandline( commandline )
                 if ret != 0:
                     userErrorExit("\nFailed to append '%s' to static library '%s'\nar return code: %d"%(objectFile.filename, libPath, ret))
 
         elif self.cdef['ARCOM_METHOD'].upper() == 'REPLACE':
             commandline = self.makeStaticLibraryCommandline( objectFiles, libraryTitle, outputDir )
-            ret = executeCommandline( commandline )
+            ret = self.executeCommandline( commandline )
             if ret != 0:
                 userErrorExit("\nFailed to create static library '%s'\nar command line:\n%s\nar return code: %d"%(libPath, commandline,  ret))
         else:
@@ -508,7 +516,7 @@ class CTXCompiler:
 
             commandline = "%s %s"%(self.cdef['RANLIB'], libPath)
             # Returnvalue is ignored since RANLIB by "de facto" always returns 0.
-            executeCommandline( commandline )
+            self.executeCommandline( commandline )
 
         if os.path.exists( self.stdCommandfileName ):
             os.remove( self.stdCommandfileName )
@@ -647,7 +655,7 @@ class CTXBuildSession:
         infoMessage('from ' + os.getcwd() + ' executing: ' + cmdline,  6)
         linkCommandFileName = 'linkCmdFileName096848hf434qas.file'
         cmdline = prepareCommandFile( cmdline,  linkCommandFileName, self.cdefPath)
-        ret = executeCommandline( cmdline )
+        ret = self.executeCommandline( cmdline )
         if ret != 0:
             userErrorExit("\nFailed to link: '%s'\nCompiler return code: %d"%(cmdline, ret))
         if os.path.exists(linkCommandFileName):

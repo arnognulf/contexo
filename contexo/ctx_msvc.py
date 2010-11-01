@@ -4,7 +4,7 @@ import os.path
 import ntpath
 from xmltools import XMLGenerator
 import uuid
-
+from contexo.ctx_common import userErrorExit
 def relntpath(path, start):
     import ntpath #the windows version of os.path #available in python 2.6
 #    return ntpath.relpath(path,  start)

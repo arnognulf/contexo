@@ -282,7 +282,7 @@ class CTXDepMgr: # The dependency manager class.
             # we process each of them by a recursive call to this function.
             #
 
-            self.__updateDependencies( incFileList, pathList )
+            self.updateDependencies( incFileList, pathList )
 
 
     # - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -
@@ -327,7 +327,7 @@ class CTXDepMgr: # The dependency manager class.
             inputFileList.extend ( cmod.getTestSourceAbsolutePaths() )#getTestSourceFilenames() )
             #pathList += assureList ( cmod.getTestDir () )
 
-        self.__updateDependencies ( inputFileList, list(paths) )
+        self.updateDependencies ( inputFileList, list(paths) )
 
         #copy dependencies for module's sourcefiles from the global dependency dictionary
         for inputFile in inputFileList:
@@ -495,7 +495,7 @@ class CTXDepMgr: # The dependency manager class.
         def enclosedRecursion(includeFiles):
             for incFile in includeFiles:
                 if incFile not in self.dependencies:
-                    self.__updateDependencies ( [incFile], pathList  )
+                    self.updateDependencies ( [incFile], pathList  )
                     ctxAssert ( incFile in self.dependencies, "incFile= " + incFile )
                 if incFile not in processedFiles:
                     depIncludes = set ( self.dependencies[incFile][0] )
@@ -521,7 +521,7 @@ class CTXDepMgr: # The dependency manager class.
             pathList.extend ( extraPaths )
 
         #get the includes that 'filenames' depend on i.e. ( the includes files in the filenames list include )
-        depIncludes = self.__getDependentIncludes ( filenames, pathList )
+        depIncludes = self.getDependentIncludes ( filenames, pathList )
 
 #        includePaths = set ()
 #        for f in depIncludes:
@@ -574,7 +574,7 @@ class CTXDepMgr: # The dependency manager class.
         if self.needUpdate:
             self.updateDependencyHash()
 
-        includeFiles = self.__getDependentIncludes ( [sourceFile], list(self.depPaths))
+        includeFiles = self.getDependentIncludes ( [sourceFile], list(self.depPaths))
 
         #deps = list()
         #for f in includeFiles:

@@ -346,7 +346,7 @@ class CTXRawCodeModule:
     def getContexoDir( self ):
         return os.path.join( self.modRoot, contexo_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    def getSourceDir( self )
+    def getSourceDir( self ):
         return os.path.join( self.modRoot, src_dirname )
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getTestDir( self ):
