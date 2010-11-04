@@ -14,10 +14,8 @@ import os.path
 ###############################################################################
 
 import os
-#import sys
 import string
 import shutil
-#import config
 import ctx_log
 import ctx_base
 from ctx_common import *
@@ -232,20 +230,6 @@ class CTXRawCodeModule:
         self.modName = os.path.basename( self.modRoot );
         ctxAssert( os.path.exists(self.modRoot), 'Module path should be resolved at this point' )
 
-    # TODO: these are the public functions ctx_cmod should provide
-    def getAllSources(self):
-	return list()
-    def getUpdatedSources(self):
-	return list()
-    def getTestSources(self):
-	return list()
-    def getPublicHeaders(self):
-	return list()
-    def getPrivateHeaders(self):
-	return list()
-    def getTestHeaders(self):
-	return list()
-
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getName(self):
         return self.modName
@@ -367,6 +351,56 @@ class CTXRawCodeModule:
     def hasExternalDependencies( self ):
         xdepends_file = os.path.join( self.getContexoDir(), 'xdepends' )
         return os.path.exists( xdepends_file )
+    #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    def getExternalIncludes( self ):
+
+        include_paths = list()
+
+        #
+        ## Locate external dependencies declaration file, and parse it if found.
+        #
+
+        xdep_filepath = os.path.join( self.getContexoDir(), xdep_filename )
+
+        if os.path.exists( xdep_filepath ):
+            xdep_vars = readLstFile( xdep_filepath )
+
+            # We now have a list of environment variables or config option names.
+            # Resolve each of them and append to the include paths.
+
+            for xdep_var in xdep_vars:
+
+                #xdep_not_found = True
+
+                include_path_candidates = None
+
+                xdep_val = os.environ.get (xdep_var, '')
+
+                if xdep_val != '':
+                    include_path_candidates = xdep_val
+                    include_path_candidates = include_path_candidates.split( os.pathsep )
+                    #xdep_not_found = False
+
+                if include_path_candidates == None:
+                    warningMessage("Cannot resolve item '%s' specified in '%s'"%( xdep_var, xdep_filepath))
+
+                include_path_candidates = assureList( include_path_candidates )
+
+                for cand in include_path_candidates:
+                    # Remove trailing backslash and add quotes around it.
+                    cand = cand.strip('\"')
+                    cand = cand.rstrip('\\')
+
+                    if not os.path.exists( cand ):
+                        userErrorExit("Cannot find dependency location '%s' resolved from '%s'."%(cand, xdep_var))
+
+                    #cand = '\"' + cand + '\"'
+                    include_paths.append( cand )
+        else:
+            infoMessage("Module %s has no external depenencies."%self.getName(), 5)
+
+        return include_paths
+
 
 #------------------------------------------------------------------------------
 #
@@ -377,6 +411,7 @@ class CTXCodeModule( CTXRawCodeModule ):
     #
     # - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -
     def __init__( self, moduleRoot, pathlist = None, buildUnitTests = False, forceRebuild = False, archPath = list(), legacyCompilingMod = False ):
+        userErrorExit("CTXCodeModule is DEPRECATED, use CTXRawCodeModule and CTXBuildSession instead")
         CTXRawCodeModule.__init__( self, moduleRoot, pathlist, buildUnitTests, archPath )
         self.moduleTag     = str()
         self.buildParams   = ctx_base.CTXBuildParams()
@@ -393,10 +428,9 @@ class CTXCodeModule( CTXRawCodeModule ):
             self.moduleTag     = 'COMPILING_MOD_' + string.upper( self.getName() )
             self.buildParams.prepDefines.append( self.moduleTag )
 
-
-
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def resolveExternalDeps( self ):
+        userErrorExit("resolveExternalDeps is DEPRECATED, use getExternalIncludes instead")
 
         include_paths = list()
 
@@ -448,15 +482,20 @@ class CTXCodeModule( CTXRawCodeModule ):
     ###################### DEPRECATED##################################################
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: unused
     def addBuildParams( self, buildParams ):
+        userErrorExit("addBuildParams is DEPRECATED")
+   
         self.buildParams.add( buildParams )
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def forceRebuild( self ):
+        userErrorExit("forceRebuild is DEPRECATED")
         self.rebuildAll = True
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     # TODO: cmod should not know anything about building, only representing source files!!!
     def buildStaticObjects( self, session, buildDir = None ):
+        userErrorExit("buildStaticObject is DEPRECATED")
+
         #LOG
         ctx_log.ctxlogBeginCodeModule( self.getName() )
 
@@ -508,8 +547,10 @@ class CTXCodeModule( CTXRawCodeModule ):
 
         return objlist
 
+    # TODO: DEPRECATE DEPRECATE DEPRECATE 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def clean( self, buildDir = None ):
+        userErrorExit("clean is DEPRECATED")
         imDirs = list()
         outputDir = self.getOutputDir()
 

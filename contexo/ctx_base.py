@@ -667,6 +667,7 @@ class CTXBuildSession:
     # Builds a source file and returns a CTXStaticObject.
     #
     def buildStaticObject( self, srcFile, outputDir, buildParams = None, forceRebuild = False ):
+        userErrorExit("buildStaticObject is DEPRECATED, use buildStaticObjects instead")
         objFileTitle = None
 
         joinedBuildParams = CTXBuildParams()
@@ -721,8 +722,8 @@ class CTXBuildSession:
     #
     # The session should know: how do we want to build this?
     # which bc? and implicit cdef?
-    # Do we want tests?
-    # do we want one library for each module?
+    # Do we want tests? CHECK -- remove from cmod later
+    # do we want one library for each module? 
     # do we want bulk build or parallell build?
     # additional includes?
     def buildModuleObjects( self, modules = list(), buildParams = None, forceRebuild = False, buildUnitTests = False ):
@@ -742,7 +743,7 @@ class CTXBuildSession:
 	        # assume that external dependencies never change, otherwise we get forced rebuilds whenever we've got external dependencies
 	        ## contexo detects changes in the file xdepends elsewere
                 #self.forceRebuild()
-                buildParams.incPaths.extend( xdepends )
+                buildParams.incPaths.extend( mod.getExternalIncludes() )
 
             #
             # Handle output directory settings
@@ -755,7 +756,7 @@ class CTXBuildSession:
                     os.makedirs( outputDir )
 
             #
-            # Build sources for this module.
+            # Build sources for the module.
             #
             srcFiles = mod.getSourceAbsolutePaths()
             if buildUnitTests:

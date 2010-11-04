@@ -1,12 +1,10 @@
 import os
-#import sys
 import hashlib
 import cPickle
 
 from stat import *
 
 from ctx_common import *
-#import ctx_cmod
 
 import ctx_cparser
 
