@@ -713,3 +713,19 @@ class CTXBuildSession:
         return ret
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+    #
+    # Builds a list of modules and returns a list of CTXStaticObjects.
+    #
+    # The session should know: how do we want to build this?
+    # which bc? and implicit cdef?
+    # Do we want tests?
+    # do we want one library for each module?
+    # do we want bulk build or parallell build?
+    # additional includes?
+    def buildModuleObjects( self, modules, buildParams = None, forceRebuild = False, buildTests = False ):
+	self.builtStaticObjects = list()
+
+    def linkLibrary( self, staticObjects, libName):
+	return False
+
