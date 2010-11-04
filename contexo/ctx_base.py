@@ -16,6 +16,7 @@ import config
 from ctx_common import *
 from ctx_log import *
 import hashlib
+import ctx_log
 
 #------------------------------------------------------------------------------
 # \class {CTXBuildParams}
@@ -661,6 +662,7 @@ class CTXBuildSession:
 
         pass
 
+    # TODO: DEPRECATE DEPRECATE DEPRECATE 
     #
     # Builds a source file and returns a CTXStaticObject.
     #
@@ -723,8 +725,58 @@ class CTXBuildSession:
     # do we want one library for each module?
     # do we want bulk build or parallell build?
     # additional includes?
-    def buildModuleObjects( self, modules, buildParams = None, forceRebuild = False, buildTests = False ):
-	self.builtStaticObjects = list()
+    def buildModuleObjects( self, modules = list(), buildParams = None, forceRebuild = False, buildUnitTests = False ):
+	objlist = list()
+	for mod in modules:
+	    #LOG
+            ctx_log.ctxlogBeginCodeModule( mod.getName() )
+
+            infoMessage("Building module '%s'"%(mod.getName()), 2)
+
+            buildParams = CTXBuildParams()
+            buildParams.add( self.buildParams )
+
+            # TODO: external dependencies must be revisited.
+            xdepends = assureList( self.resolveExternalDeps() )
+            if len(xdepends) != 0:
+	        # assume that external dependencies never change, otherwise we get forced rebuilds whenever we've got external dependencies
+	        ## contexo detects changes in the file xdepends elsewere
+                #self.forceRebuild()
+                buildParams.incPaths.extend( xdepends )
+
+            #
+            # Handle output directory settings
+            #
+
+            outputDir = self.getOutputDir()
+            if buildDir != None:
+                outputDir = os.path.join( outputDir, buildDir )
+                if not os.path.exists( outputDir ):
+                    os.makedirs( outputDir )
+
+            #
+            # Build sources for this module.
+            #
+            srcFiles = mod.getSourceAbsolutePaths()
+            if buildUnitTests:
+                srcFiles.extend( self.getTestSourceAbsolutePaths() )
+	    # TODO: where the action is:
+            for src in srcFiles:
+                obj = session.buildStaticObject( os.path.normpath( src ), os.path.normpath( outputDir ), buildParams, self.rebuildAll )
+                objlist.append( obj )
+
+            for prebuiltObjectFile in self.prebuiltObjFiles:
+                obj = session.copyPrebuiltObject( os.path.normpath( prebuiltObjectFile), outputDir)
+                objlist.append( obj)
+
+            #LOG
+            for obj in objlist:
+                ctx_log.ctxlogAddObjectFile( obj.filename, os.path.basename(obj.source) )
+
+            #LOG
+            ctx_log.ctxlogEndCodeModule()
+
+        return objlist
 
     def linkLibrary( self, staticObjects, libName):
 	return False
