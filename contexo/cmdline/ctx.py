@@ -200,6 +200,27 @@ def build_libraries( ctx_modules, lib_name, output_path, build_dir, session ):
         ctx_log.ctxlogEndLibrary()
     return all_objects
 
+
+#------------------------------------------------------------------------------
+def strip_ctxincludes(src, dst):
+    f = open( src ) # Open for reading
+    f_new = open( dst,"w" )
+    lines = f.readlines()   # Read in the contents
+    for line in lines:
+        if line.startswith("#include"):
+            pos1 = line.find('"') +1
+            pos2 = line.find('"',line.find('"')+1)
+            if pos1 * pos2 > 0:
+                orig_header = line[pos1:pos2]
+                header = os.path.basename(orig_header)
+                f_new.write('#include "'+header+'"\n')
+            else:
+                f_new.write(line)
+        else:
+            f_new.write(line)
+    f_new.close()
+    f.close()
+
 #------------------------------------------------------------------------------
 def export_public_module_headers ( depmgr, modules, headerPath ):
 
@@ -214,7 +235,7 @@ def export_public_module_headers ( depmgr, modules, headerPath ):
         src = publicHeader
         dst = os.path.join( headerPath, os.path.basename(publicHeader) )
         infoMessage("Exporting header: %s"%(os.path.basename(publicHeader)))
-        shutil.copyfile( src, dst )
+        strip_ctxincludes( src, dst )
 
 #------------------------------------------------------------------------------
 def export_headers( depmgr, headers, headerDir, cview ):
