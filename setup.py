@@ -25,9 +25,9 @@ path = os.path.expandvars("$PATH")
 paths = path.split(os.pathsep)
 
 if sys.platform == 'win32':
-	interestingfiles = ['ctx.bat', 'ctx.py',  'git-ctx.py', 'git-ctx.bat', 'msvc.py', 'msvc.bat', 'tengiltests.py', 'genmake.py', 'genmake.bat']
+	interestingfiles = ['ctx.bat', 'expand_ctxincludes.py', 'ctx.py',  'git-ctx.py', 'git-ctx.bat', 'msvc.py', 'msvc.bat', 'tengiltests.py', 'genmake.py', 'genmake.bat']
 else:
-	interestingfiles = ['ctx', 'ctx.py',  'git-ctx', 'git-ctx.py', 'tengiltests.py', 'genmake.py', 'genmake']
+	interestingfiles = ['ctx', 'ctx.py', 'expand_ctxincludes.py', 'git-ctx', 'git-ctx.py', 'tengiltests.py', 'genmake.py', 'genmake']
 combination = [(path, file) for path in paths for file in interestingfiles]
 ctxpaths = filter(os.path.exists, map(lambda (pair): os.path.join(*pair), combination) )
 suspected_ctx_paths = filter(lambda ctxpath: re.search(os.path.join('c:', 'program files'), ctxpath, re.IGNORECASE), ctxpaths)
@@ -42,7 +42,7 @@ setup(name="Contexo",
       author="Manuel Astudillo",
       author_email="manuel.astudillo@scalado.com",
       url="http://www.scalado.com",
-      scripts =  ['contexo/cmdline/ctx.py', 'contexo/cmdline/git-ctx.py', 'contexo/cmdline/git-ctx', 'contexo/cmdline/ctx', 'contexo/cmdline/ctx.bat', 'contexo/cmdline/bdef2rspec.py', 'contexo/plugins/export/msvc.py', 'contexo/plugins/export/tengiltests.py', 'contexo/plugins/export/genmake.py' ],
+      scripts =  ['contexo/cmdline/ctx.py', 'contexo/cmdline/expand_ctxincludes.py', 'contexo/cmdline/git-ctx.py', 'contexo/cmdline/git-ctx', 'contexo/cmdline/ctx', 'contexo/cmdline/ctx.bat', 'contexo/cmdline/bdef2rspec.py', 'contexo/plugins/export/msvc.py', 'contexo/plugins/export/tengiltests.py', 'contexo/plugins/export/genmake.py' ],
       package_dir = { 'contexo.defaults':'defaults' ,'': 'otherlibs', 'colorama':'colorama', 'contexo':'contexo'},  #the '':'otherlibs' is a hack to make it load argparse without a package, from a subdirectory otherlibs
       package_data={ 'contexo': ['cmdline/ctx.bat'],  'contexo.defaults': ['contexo.cfg', 'bconf/*', 'cdef/*' ], 'contexo.plugins.export': ['msvc.bat','rspectree.bat'] },
       packages = [ 'contexo.defaults', 'contexo' ,  'contexo.plugins', 'contexo.plugins.export', 'colorama' ],
