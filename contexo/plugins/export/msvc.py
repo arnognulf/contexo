@@ -129,6 +129,10 @@ def cmd_parse( args ):
         #dirname = os.path.dirname(filename)
         for inc in user_includepaths:
             incPaths.append(inc)
+       
+    view = package.export_data['VIEW']
+    for inc in view.getItemPaths('modules'):
+        incPaths.append(inc)
 
     #print   'incPaths %s' %incPaths
 
@@ -226,7 +230,8 @@ def cmd_parse( args ):
                                                                        proj['PROJNAME'],
                                                                        args.configuration_type,
                                                                        libNames,
-                                                                       libPaths )
+                                                                       libPaths,
+                                                                       args.disable_legacy_includes)
 
     #
     # Handle external project if specified
@@ -332,6 +337,8 @@ parser.add_argument('-pl', '--platform', default='Win32',
  any settings introduced by the build configuration specified with the -b or
  --bconf option.""")
 parser.add_argument('--legacy-compiling-mod', action='store_true', help='Enables legacy COMPILING_MOD_<MODULENAME> preprocessor defines which may be needed to build code which relied on this previous behaviour (in Contexo 0.8.0 and earlier).')
+
+parser.add_argument('-q', '--disable-legacy-includes', action='store_true', help='Disables legacy Contexo preprocessor #include directives, will significantly speed up the build process and no longer require re-runs of msvc.py when a header is added.')
 
 parser.add_argument('-o', '--output', default=os.getcwd(),
  help="The output directory for the export.")

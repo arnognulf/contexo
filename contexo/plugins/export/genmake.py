@@ -56,8 +56,8 @@ exe = str()
 for arg in sys.argv:
     if arg == '-h':
         print 'help:'
-        print '-d', --disable-legacy-includes: legacy includes'
-    if arg == '-d' or arg == '--disable-legacy-includes':
+        print '-q, --disable-legacy-includes: legacy includes'
+    if arg == '-q' or arg == '--disable-legacy-includes':
         legacyIncludes = False
     if arg == '-t':
         buildTests = True
@@ -296,7 +296,7 @@ for mod in module_map:
         		makefile.write("\n")
 	        	makefile.write("\t$(CC) $(CFLAGS) $(ADDFLAGS)")
 			makefile.write(" $(INCLUDES)")
-                        if legacyIncludes;
+                        if legacyIncludes:
 	                    for hdrdir in mod['DEPHDRS']:
 		                makefile.write(" -I"+os.path.dirname( hdrdir))
         		makefile.write(" $(PREP_DEFS)")

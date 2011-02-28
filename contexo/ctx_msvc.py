@@ -44,7 +44,7 @@ def make_libvcproj8( projectName, cflags, prepDefs, codeModules, outLib,
                     debug, do_tests,  incPaths, vcprojPath, platform = 'Win32',
                     fileTitle = None, configType = 'lib',
                      additionalDependencies = None,
-                     additionalLibraryDirectories = None):
+                     additionalLibraryDirectories = None, disableLegacyIncludes = False):
 
 
     import os.path
@@ -250,9 +250,11 @@ def make_libvcproj8( projectName, cflags, prepDefs, codeModules, outLib,
         for srcFile in mod['SOURCES']:
             project.startElement ('File', {'RelativePath': relntpath(srcFile, vcprojPath)})
             project.startElement('FileConfiguration',{'Name':"".join([variant,'|',platform])})
-            additionalIncludes = relntpath(mod['PRIVHDRDIR'], vcprojPath)
-            for hdrdir in mod['DEPHDRDIRS']:
-                additionalIncludes = additionalIncludes + ';' + relntpath(hdrdir, vcprojPath)
+            additionalIncludes = ''
+            if not disableLegacyIncludes:
+                additionalIncludes = relntpath(mod['PRIVHDRDIR'], vcprojPath)
+                for hdrdir in mod['DEPHDRDIRS']:
+                    additionalIncludes = additionalIncludes + ';' + relntpath(hdrdir, vcprojPath)
             project.element('Tool',{'Name':'VCCLCompilerTool','AdditionalIncludeDirectories':additionalIncludes})
             project.endElement ('FileConfiguration')
             project.endElement ('File')
