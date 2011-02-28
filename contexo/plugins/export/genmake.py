@@ -42,12 +42,6 @@ from contexo.ctx_common import infoMessage, userErrorExit, warningMessage
 import contexo.ctx_cfg as ctx_cfg
 import contexo.ctx_cmod
 
-# use the same include directories for ALL source files when building
-# however, only export public headers
-# defaults to OFF
-# may cause command line overflow
-# may build incorrectly due to wrong header being selected
-# but may be needed for netbeans
 legacyIncludes = True
 exearg = False
 buildTests = False
@@ -91,7 +85,6 @@ def create_module_mapping_from_module_list( ctx_module_list, depMgr):
 
         modDict = { 'MODNAME': rawMod.getName(), 'SOURCES': srcs, 'PRIVHDRS': privHdrs, 'PUBHDRS': pubHdrs, 'PRIVHDRDIR': rawMod.getPrivHeaderDir(), 'TESTSOURCES':testSrcs , 'TESTHDRS':testHdrs, 'DEPHDRS':depHdrs, 'TESTDIR':rawMod.getTestDir()}
         code_module_map.append( modDict )
-
 
     return code_module_map
 
