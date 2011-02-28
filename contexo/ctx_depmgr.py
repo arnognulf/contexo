@@ -103,7 +103,6 @@ class CTXDepMgr: # The dependency manager class.
             inputFile = relativeInputFile
             if not os.path.isabs(relativeInputFile):
                 inputFile = os.path.basename(relativeInputFile)
-            print 'inputFile:'+inputFile
             inputFilePath = self.locate(inputFile,  pathList)
             if inputFilePath == None:
                 dependencies = self.findFilesDependingOn(inputFile)

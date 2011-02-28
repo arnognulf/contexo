@@ -48,7 +48,7 @@ import contexo.ctx_cmod
 # may cause command line overflow
 # may build incorrectly due to wrong header being selected
 # but may be needed for netbeans
-allincludes = False
+legacyIncludes = True
 exearg = False
 buildTests = False
 exe = str()
@@ -56,9 +56,9 @@ exe = str()
 for arg in sys.argv:
     if arg == '-h':
         print 'help:'
-        print '-a, --allincludes: same include path for all build directives'
-    if arg == '-a' or arg == '--allincludes':
-        allincludes = True
+        print '-d', --disable-legacy-includes: legacy includes'
+    if arg == '-d' or arg == '--disable-legacy-includes':
+        legacyIncludes = False
     if arg == '-t':
         buildTests = True
 
@@ -87,7 +87,7 @@ def create_module_mapping_from_module_list( ctx_module_list, depMgr):
             if hdr_location != None:
                 hdrpaths = depMgr.getDependencies(hdr_location)
                 for hdrpath in hdrpaths:
-					depHdrs.add( hdrpath)
+                    depHdrs.add( hdrpath)
 
         modDict = { 'MODNAME': rawMod.getName(), 'SOURCES': srcs, 'PRIVHDRS': privHdrs, 'PUBHDRS': pubHdrs, 'PRIVHDRDIR': rawMod.getPrivHeaderDir(), 'TESTSOURCES':testSrcs , 'TESTHDRS':testHdrs, 'DEPHDRS':depHdrs, 'TESTDIR':rawMod.getTestDir()}
         code_module_map.append( modDict )
@@ -120,8 +120,7 @@ bc_file = package.export_data['SESSION'].getBCFile()
 build_params = bc_file.getBuildParams()
 
 depMgr = package.export_data['DEPMGR']
-print package.export_data['MODULES']
-print depMgr
+view = package.export_data['VIEW']
 module_map = create_module_mapping_from_module_list( package.export_data['MODULES'], depMgr)
 
 if not os.path.isfile("Makefile.inc"):
@@ -166,17 +165,11 @@ makefile.write("### include user configured settings\n")
 makefile.write("include Makefile.cfg\n")
 makefile.write("\n")
 
-allIncDirs = set()
-for mod in module_map:
-	for hdr in mod['DEPHDRS']:
-		allIncDirs.add( os.path.dirname( hdr))
-
-if allincludes == True:
-	makefile.write("### All include paths\n")
-	makefile.write("INCLUDES=")
-	for incPath in allIncDirs:
-		makefile.write(" -I"+incPath)
-	makefile.write("\n")
+makefile.write("### Rspec include paths\n")
+makefile.write("INCLUDES=")
+for incPath in view.getItemPaths('modules'):
+    makefile.write(" -I"+incPath)
+makefile.write("\n")
 
 # Preprocessor defines
 makefile.write("### Standard defines\n")
@@ -287,11 +280,10 @@ for mod in module_map:
 			makefile.write(" " + hdr)
 		makefile.write("\n")
 		makefile.write("\t$(CC) $(CFLAGS) $(ADDFLAGS)")
-		if allincludes == True:
-			makefile.write(" $(INCLUDES)")
-		else:
-			for hdrdir in mod['DEPHDRS']:
-				makefile.write(" -I"+os.path.dirname( hdrdir))
+	        makefile.write(" $(INCLUDES)")
+                if legacyIncludes:
+		    for hdrdir in mod['DEPHDRS']:
+		        makefile.write(" -I"+os.path.dirname( hdrdir))
 		makefile.write(" $(PREP_DEFS) -c "+srcFile+" -o $@\n");
         if buildTests == True:
         	for testFile in mod['TESTSOURCES']:
@@ -303,11 +295,10 @@ for mod in module_map:
 			        makefile.write( " " + hdr)
         		makefile.write("\n")
 	        	makefile.write("\t$(CC) $(CFLAGS) $(ADDFLAGS)")
-		        if allincludes == True:
-			        makefile.write(" $(INCLUDES)")
-        		else:
-	        		for hdrdir in mod['DEPHDRS']:
-		        		makefile.write(" -I"+os.path.dirname( hdrdir))
+			makefile.write(" $(INCLUDES)")
+                        if legacyIncludes;
+	                    for hdrdir in mod['DEPHDRS']:
+		                makefile.write(" -I"+os.path.dirname( hdrdir))
         		makefile.write(" $(PREP_DEFS)")
 	        	for hdrdir in mod['DEPHDRS']:
 		        	makefile.write(" -I"+os.path.dirname( hdrdir))

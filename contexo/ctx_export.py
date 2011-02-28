@@ -41,8 +41,9 @@ class CTXExportData:
         self.export_data['TESTS']         = do_tests
         self.export_data['SESSION']       = build_session
         self.export_data['DEPMGR']        = dependency_manager
+        self.export_data['VIEW']          = view
         self.export_data['ENV']           = env
-        #self.export_data['OUTPUT_DIR']    = cmdline_options.output
+        #self.export_data['OUTPUT_DIR']   = cmdline_options.output
 
         self.export_data['PATHS']         = dict()
         for section in REPO_PATH_SECTIONS:
