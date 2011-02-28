@@ -94,12 +94,16 @@ class CTXDepMgr: # The dependency manager class.
         incFileList         = list()
         checksum            = str()
 
-        for inputFile in inputFileList:
+        for relativeInputFile in inputFileList:
             #
             # Resolve full path to the given input file. First try to locate it in
             # our path dictionary, otherwise we search it using the pathList.
             # The dependency list keys will be absolute paths
             #
+            inputFile = relativeInputFile
+            if not os.path.isabs(relativeInputFile):
+                inputFile = os.path.basename(relativeInputFile)
+            print 'inputFile:'+inputFile
             inputFilePath = self.locate(inputFile,  pathList)
             if inputFilePath == None:
                 dependencies = self.findFilesDependingOn(inputFile)
@@ -128,7 +132,6 @@ class CTXDepMgr: # The dependency manager class.
                 else:
                     inputFileContents = self.getFileContents( inputFilePath )
                     incFileList = ctx_cparser.parseIncludes(inputFileContents)[0]
-
 
                     self.dependencies[inputFilePath] = (incFileList, checksum)
 

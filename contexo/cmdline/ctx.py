@@ -319,6 +319,7 @@ def cmd_buildmod(args):
     session = ctx_base.CTXBuildSession( bc )
 
     session.setDependencyManager( depmgr )
+    session.setView( cview )
 
 
 
@@ -397,6 +398,7 @@ def cmd_buildcomp(args):
     depmgr = CTXDepMgr ( codeModulePaths = cview.getItemPaths('modules'), failOnMissingHeaders = args.fail_on_missing_headers, archPath = bc.getArchPath(), legacyCompilingMod = args.legacy_compiling_mod, globalOutputDir = obj_dir )
     session     = ctx_base.CTXBuildSession( bc )
     session.setDependencyManager( depmgr )
+    session.setView( cview )
 
     # Register build configuration in log handler
     ctx_log.ctxlogSetBuildConfig( bc.getTitle(),
@@ -534,6 +536,7 @@ def cmd_build(args):
     depmgr = CTXDepMgr ( codeModulePaths = cview.getItemPaths('modules'), failOnMissingHeaders = args.fail_on_missing_headers, archPath = bc.getArchPath(), additionalIncDirs = absIncDirs, legacyCompilingMod = args.legacy_compiling_mod, globalOutputDir = obj_dir )
     session = ctx_base.CTXBuildSession( bc )
     session.setDependencyManager( depmgr )
+    session.setView( cview )
 
     items = expand_list_files( cview, args.items )
 
@@ -648,6 +651,7 @@ def cmd_export(args):
     depmgr  = CTXDepMgr ( codeModulePaths = cview.getItemPaths('modules'), failOnMissingHeaders = args.fail_on_missing_headers, archPath = bc.getArchPath(), globalOutputDir = obj_dir )
     session = ctx_base.CTXBuildSession( bc )
     session.setDependencyManager( depmgr )
+    session.setView( cview )
 
     export_items = expand_list_files( cview, args.export_items )
 

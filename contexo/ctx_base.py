@@ -617,6 +617,10 @@ class CTXBuildSession:
     def getDependencyManager(self):
         return self.depMgr
 
+    def setView( self, view ):
+        self.view = view
+
+
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def makeStaticObjectChecksum( self, sourceFile, buildParamsChecksum ):
         checksumList = list()
@@ -763,11 +767,13 @@ class CTXBuildSession:
     #
     # Builds a source file and returns a CTXStaticObject.
     #
-    def buildStaticObject( self, srcFile, outputDir, buildParams = None, forceRebuild = False ):
+    def buildStaticObject( self, srcFile, outputDir, buildParams = None, forceRebuild = False, legacyIncludes = True ):
         objFileTitle = None
 
         joinedBuildParams = CTXBuildParams()
-        joinedBuildParams.incPaths.extend( self.depMgr.getIncludePaths( [srcFile] ) )
+        if legacyIncludes:
+            joinedBuildParams.incPaths.extend( self.depMgr.getIncludePaths( [srcFile] ) )
+        joinedBuildParams.incPaths.extend( self.view.getItemPaths('modules') )
 
         joinedBuildParams.add( self.buildParams )
         if buildParams != None:

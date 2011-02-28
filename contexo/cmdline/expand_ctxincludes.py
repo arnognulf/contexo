@@ -48,6 +48,8 @@ for module_path in view.getItemPaths('modules'):
             item = os.path.join(directory,name)
             if name == 'src' and os.path.isdir(item) == True:
                 depmgr.addCodeModules( os.path.basename(directory), unitTests=True )
+            if name.endswith('.h') and os.path.basename(directory) != 'inc':
+                depmgr.addCodeModules( os.path.basename(directory), unitTests=True )
             if os.path.isfile(item):
                 if item[item.rfind('.'):] in source_extensions:
                     sources.add(item)

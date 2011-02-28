@@ -120,6 +120,8 @@ bc_file = package.export_data['SESSION'].getBCFile()
 build_params = bc_file.getBuildParams()
 
 depMgr = package.export_data['DEPMGR']
+print package.export_data['MODULES']
+print depMgr
 module_map = create_module_mapping_from_module_list( package.export_data['MODULES'], depMgr)
 
 if not os.path.isfile("Makefile.inc"):

@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "private_hello.h"
-#include "hello_dependency.h"
+#include "hello/inc/private_hello.h"
+#include "hello_dependency/hello_dependency.h"
 
 extern int compute_answer();
 
