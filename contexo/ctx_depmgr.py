@@ -315,7 +315,7 @@ class CTXDepMgr: # The dependency manager class.
             f.close()
 
     # - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - -
-    def addCodeModules( self, codeModulePaths, unitTests = False ):
+    def addCodeModules( self, codeModulePaths = list(), unitTests = False ):
         from ctx_cmod import CTXRawCodeModule
 
         codeModulePaths = assureList(codeModulePaths)

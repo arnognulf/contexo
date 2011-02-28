@@ -81,9 +81,6 @@ def resolveModuleLocation( modName, pathlist ):
 #------------------------------------------------------------------------------
 def isContexoCodeModule( path ):
 
-    if not os.path.exists(path):
-        return False
-
     if not os.path.isdir( path ):
 	return False
 

@@ -71,6 +71,10 @@ class CTXRepositoryFS(CTXRepository):
             userErrorExit("No HREF specified for repository '%s'. Failed to aquire HREF from local copy '%s'"\
                            %(id_name, self.getAbsLocalPath()))
 
+	# these are hardcoded dummy paths for ctxview
+	self.local_path = local_path
+    	self.codeModulePaths = ['dummy1']
+	self.componentPaths = ['dummy2']
         CTXRepository.__init__( self, id_name, local_path, href, None, version_control=False )
         self.msgSender = "CTXRepositoryFS"
 
