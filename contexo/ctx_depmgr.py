@@ -230,7 +230,8 @@ class CTXDepMgr: # The dependency manager class.
 
         #copy dependencies for module's sourcefiles from the global dependency dictionary
         for inputFile in inputFileList:
-            self.moduleDependencies[cmod.getName()].update ( self.dependencies[self.locate(inputFile)][0] )
+	    if cmod.getName() != None:
+	        self.moduleDependencies[cmod.getName()].update ( self.dependencies[self.locate(inputFile)][0] )
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def findFilesDependingOn(self,  header):

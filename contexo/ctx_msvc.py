@@ -269,9 +269,11 @@ def make_libvcproj8( projectName, cflags, prepDefs, codeModules, outLib,
                 #project.characters('testsource:%s vcprojPath: %s'%(src, vcprojPath))
                 project.startElement ('File', {'RelativePath':relntpath(src, vcprojPath)} )
                 project.startElement('FileConfiguration',{'Name':"".join([variant,'|',platform])})
-                additionalTestIncludes = relntpath(mod['PRIVHDRDIR'], vcprojPath)
-                for hdrdir in mod['DEPHDRDIRS']:
-                    additionalTestIncludes = additionalTestIncludes + ';' + relntpath(hdrdir, vcprojPath)
+		additionalTestIncludes = ''
+            	if not disableLegacyIncludes:
+                    additionalTestIncludes = relntpath(mod['PRIVHDRDIR'], vcprojPath)
+                    for hdrdir in mod['DEPHDRDIRS']:
+                        additionalTestIncludes = additionalTestIncludes + ';' + relntpath(hdrdir, vcprojPath)
                 project.element('Tool',{'Name':'VCCLCompilerTool','AdditionalIncludeDirectories':additionalTestIncludes})
                 project.endElement ('FileConfiguration')
                 project.endElement ('File')
