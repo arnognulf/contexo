@@ -39,17 +39,25 @@ source_extensions = ['.cpp','.h','.c','.cpp','.inl']
 view = ctx_view.CTXView( os.path.abspath(''), validate=False )
 depmgr = ctx_depmgr.CTXDepMgr ( codeModulePaths = view.getItemPaths('modules'))
 
+
 sources = set() 
+
+for module_path in view.getItemPaths('modules'):
+    for name in os.listdir(module_path):
+        module = module_path + os.sep + name
+        if not os.path.isdir(module):
+            print 'not ' + module
+
+        if ctx_cmod.isContexoCodeModule(module):
+            print module
+            depmgr.addCodeModules( os.path.basename(module), unitTests=True )
+
 for module_path in view.getItemPaths('modules'):
     directories = [module_path]
     while len(directories)>0:
         directory = directories.pop()
         for name in os.listdir(directory):
             item = os.path.join(directory,name)
-            if name == 'src' and os.path.isdir(item) == True:
-                depmgr.addCodeModules( os.path.basename(directory), unitTests=True )
-            if name.endswith('.h') and os.path.basename(directory) != 'inc':
-                depmgr.addCodeModules( os.path.basename(directory), unitTests=True )
             if os.path.isfile(item):
                 if item[item.rfind('.'):] in source_extensions:
                     sources.add(item)
@@ -58,4 +66,5 @@ for module_path in view.getItemPaths('modules'):
 
 depmgr.updateDependencyHash()
 for sourcefile in sources:
+    print sourcefile
     rewrite_source(view, depmgr, sourcefile)

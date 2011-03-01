@@ -106,7 +106,7 @@ class CTXDepMgr: # The dependency manager class.
             inputFilePath = self.locate(inputFile,  pathList)
             if inputFilePath == None:
                 dependencies = self.findFilesDependingOn(inputFile)
-                assert(dependencies)
+                # assert(dependencies)
                 msg = "Cannot locate input file: %s (from %s)"%(inputFile, ",".join(dependencies))
                 if ( self.failOnMissingHeaders):
                     userErrorExit( msg )
@@ -584,9 +584,9 @@ class CTXDepMgr: # The dependency manager class.
 
                     for dep_header in self.dependencies[header][0]:
                         if (full_path):
-                            header_set.add ( self.inputFilePathDict [ dep_header ] )
+                            header_set.add ( self.inputFilePathDict [ os.path.basename(dep_header) ] )
                         else:
-                            header_set.add ( dep_header )
+                            header_set.add ( os.path.basename(dep_header) )
 
         return list ( header_set )
 
