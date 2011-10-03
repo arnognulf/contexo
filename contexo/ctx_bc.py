@@ -54,10 +54,10 @@ class BCFile:
         #
 
         #bcFilePaths.append( os.getcwd() )
-        
         self.bcFilePaths.append(cview.getRoot())
         self.bcFilePaths.extend(cfgFile.getBConfPaths())
         self.bcFilePaths.extend(cview.getGlobalPaths("bconf"))
+        self.bcFilePaths
 
         self.cdefPaths.append(cview.getRoot())
         self.cdefPaths.extend(cfgFile.getCDefPaths())
@@ -407,22 +407,23 @@ class BCFile:
                 self.buildParams.prepDefines = section[option_name]
 
         option_name = 'SUB_BC_DIR'
-        if section.has_key( option_name ) and referenceSubBC:
-            if not section.has_key( 'SUB_BC_CFLAGS' ) or not section.has_key( 'SUB_BC_CDEF' ):
-                userErrorExit("SUB_BC_DIR requires SUB_BC_CFLAGS and SUB_BC_CDEF")
-            if type( section[ option_name ] ) == type( str() ):
-	        bc_name = section[option_name]
-                if self.subBC.has_key( bc_name ):
-                    userErrorExit("ambiguos SUB_BC_DIR directive overrides SUB_BC; did you intend to replace the SUB_BC entry with a SUB_BC_DIR entry?")
-		sub_bc = BCFile( bc_name, cview = cview, cfgFile = cfgFile, referenceSubBC = False )
-                sub_bc.cflags = self.__parse_cflags( section['SUB_BC_CFLAGS'] )
-                sub_bc.cdef = section['SUB_BC_CDEF']
-                sub_bc.cdefPath = self.__resolve_cdefPath(section, cfgFile, cdefPaths, sub_bc.cdef)
+        if referenceSubBC:
+            if section.has_key( option_name ) and referenceSubBC:
+                if not section.has_key( 'SUB_BC_CFLAGS' ) or not section.has_key( 'SUB_BC_CDEF' ):
+                    userErrorExit("SUB_BC_DIR requires SUB_BC_CFLAGS and SUB_BC_CDEF")
+                if type( section[ option_name ] ) == type( str() ):
+                    bc_name = section[option_name]
+                    if self.subBC.has_key( bc_name ):
+                        userErrorExit("ambiguos SUB_BC_DIR directive overrides SUB_BC; did you intend to replace the SUB_BC entry with a SUB_BC_DIR entry?")
+                    sub_bc = BCFile( bcFilename, cview = cview, cfgFile = cfgFile, referenceSubBC = False )
+                    sub_bc.cflags = self.__parse_cflags( section['SUB_BC_CFLAGS'] )
+                    sub_bc.cdef = section['SUB_BC_CDEF']
+                    sub_bc.cdefPath = self.__resolve_cdefPath(section, cfgFile, cdefPaths, sub_bc.cdef)
 
-                self.subBC[ bc_name ] = sub_bc
-        else:
-            if section.has_key( 'SUB_BC_CFLAGS' ) or section.has_key( 'SUB_BC_CDEF' ):
-                userErrorExit("SUB_BC_CFLAGS and SUB_BC_CDEF requires a SUB_BC_DIR entry")
+                    self.subBC[ bc_name ] = sub_bc
+            else:
+                if section.has_key( 'SUB_BC_CFLAGS' ) or section.has_key( 'SUB_BC_CDEF' ):
+                    userErrorExit("SUB_BC_CFLAGS and SUB_BC_CDEF requires a SUB_BC_DIR entry")
 
         self.__assert_correct_type( option_name, self.buildParams.prepDefines, [list] )
 
