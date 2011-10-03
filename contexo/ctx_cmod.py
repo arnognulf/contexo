@@ -184,7 +184,7 @@ def getSourcesFromDir( self, srcDir ):
                         if not subBCificListDict.has_key(subBC):
                             subBCificListDict[subBC] = list()
                         
-                        subBCificListDict[subBC] = subBCEntry + os.sep + subBC_sourceFile
+                        subBCificListDict[subBC].append(subBCEntry + os.sep + subBC_sourceFile)
 
     for srcFile in srcListDict.values():
         srcList.append(srcFile)
@@ -260,18 +260,29 @@ class CTXRawCodeModule:
         return self.modRoot
     #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     def getSourceFilenames(self):
+        if os.path.basename(os.path.dirname(self.getSourceDir())) == "scbimageregistration":
+            import pdb
+            pdb.set_trace()
+
         if len(self.srcFiles) == 0:
             srcDir = self.getSourceDir()
             self.srcFiles, self.prebuiltObjFiles, self.subBCSrcDict = getSourcesFromDir( self, srcDir )
         return self.srcFiles
 
     def getPreBuiltObjectFilenames(self):
+        if os.path.basename(os.path.dirname(self.getSourceDir())) == "scbimageregistration":
+            import pdb
+            pdb.set_trace()
+
         if len(self.srcFiles) == 0 or len(self.prebuiltObjFiles) == 0:
             srcDir = self.getSourceDir()
             self.srcFiles, self.prebuiltObjFiles,self.subBCSrcDict = getSourcesFromDir( self, srcDir )
         return self.prebuiltObjFiles
 
     def getSubBCSources(self):
+        if os.path.basename(os.path.dirname(self.getSourceDir())) == "scbimageregistration":
+            import pdb
+            pdb.set_trace()
         if len(self.subBCSrcDict) == 0 or len(self.prebuiltObjFiles) == 0:
             srcDir = self.getSourceDir()
             self.srcFiles, self.prebuiltObjFiles,self.subBCSrcDict = getSourcesFromDir( self, srcDir )
@@ -525,11 +536,15 @@ class CTXCodeModule( CTXRawCodeModule ):
 
         objlist = list()
         for src in srcFiles:
-            if src in subBCSrcFiles.values():
-                subBCName = os.path.basename(os.path.dirname(src))
-                bc = self.subBC[subBCName]
-            else:
-                bc = self.bc
+            if os.path.basename(src) == "scbfeature.c":
+                import pdb
+                pdb.set_trace()
+            bc = self.bc
+            for srcList in subBCSrcFiles.values():
+                for src in srcList:
+                    if src in subBCSrcFiles.values():
+                        subBCName = os.path.basename(os.path.dirname(src))
+                        bc = self.subBC[subBCName]
             obj = session.buildStaticObject( os.path.normpath( src ), os.path.normpath( outputDir ), bc, self.rebuildAll )
             objlist.append( obj )
  
