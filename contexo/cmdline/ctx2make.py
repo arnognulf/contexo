@@ -175,8 +175,8 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
     ccCommandLine = ccCommandLine.replace('%CC', '$(CC)')
     incPrefix = bc.getCompiler().cdef['INCPREFIX']
     incSuffix = bc.getCompiler().cdef['INCSUFFIX']
-    ccCommandLine = ccCommandLine.replace("%SOURCES", "$<")
-    ccCommandLine = ccCommandLine.replace("%TARGET", "$@")
+    ccCommandLine = ccCommandLine.replace("%SOURCES", "$${RAW_SRC/\/cygdrive\/C/c:}")
+    ccCommandLine = ccCommandLine.replace("%TARGET", "$${RAW_OBJ/\/cygdrive\/C/c:}")
 
     for subBCName,subBCObject in bc.getSubBC().iteritems():
         subIncPrefix = subBCObject.getCompiler().cdef['INCPREFIX']
@@ -188,9 +188,9 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
         subCcCommandLine = subCcCommandLine.replace('%CFLAGS', '$('+ subBCName.upper() + '_CFLAGS) $(ADDFLAGS)')
         subCxxCommandLine = subCxxCommandLine.replace('%CXXFLAGS', '$('+ subBCName.upper() + '_CXXFLAGS) $(ADDFLAGS)')
         subCcCommandLine = subCcCommandLine.replace('%CC', '$(' + subBCName.upper() + '_CC)')
-        subCcCommandLine = subCcCommandLine.replace("%SOURCES", "$<")
-        subCcCommandLine = subCcCommandLine.replace("%TARGET", "$@")
-        subCcCommandLine = subCcCommandLine.replace("%INCPATHS", subIncPrefix +  "$(LINKHEADERS)" + subIncSuffix)
+        subCcCommandLine = subCcCommandLine.replace("%SOURCES", "$${RAW_SRC/\/cygdrive\/C/c:}")
+        subCcCommandLine = subCcCommandLine.replace("%TARGET", "$${RAW_OBJ/\/cygdrive\/C/c:}")
+        subCcCommandLine = subCcCommandLine.replace("%INCPATHS", subIncPrefix +  "$${RAW_LINKHEADERS/\/cygdrive\/C/c:}" + subIncSuffix)
         subCcCommandLine = subCcCommandLine.replace('\\','/')
         subCxx = subBCObject.getCompiler().cdef['CXX']
         subCxxCommandLine = subBCObject.getCompiler().cdef['CXXCOM']
@@ -214,8 +214,8 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
 # File header
     makefile.write("#############################################\n")
     makefile.write("### Makefile generated with contexo plugin.\n")
-    makefile.write("ifeq ($(OSTYPE),cygwin)\n")
-    makefile.write("\tCYGPREFIX=\"/cygdrive\"\n")
+    makefile.write("ifeq ($(OSTYPE),)\n")
+    makefile.write("\tCYGPREFIX=/cygdrive\n")
     makefile.write("else\n")
     makefile.write("\tCYGPREFIX=\n")
     makefile.write("endif\n")
@@ -336,7 +336,7 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
         for sourceDependency in librarySources[library]:
             sourceDependencyName = ctx2_common.winPathToMsys(sourceDependency)
             baseName, ext = posixpath.splitext(sourceDependencyName)
-            makefile.write(" $(CYGPREFIX)$(OBJDIR)/" + posixpath.basename(baseName) + objSuffix)
+            makefile.write(" $(OBJDIR)/" + posixpath.basename(baseName) + objSuffix)
         makefile.write("\n")
         libraryBuildRules.append(libraryBuildRule)
     makefile.write("\n")
@@ -356,7 +356,7 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
         for sourceDependency in librarySources[library]:
             sourceDependencyName = ctx2_common.winPathToMsys(sourceDependency)
             basePath, ext = posixpath.splitext(sourceDependencyName)
-            makefile.write("$(CYGPREFIX)$(OBJDIR)/" + posixpath.basename(basePath) + objSuffix + ": $(CYGPREFIX)" + sourceDependencyName + "\n")
+            makefile.write("$(OBJDIR)/" + posixpath.basename(basePath) + objSuffix + ": $(CYGPREFIX)" + sourceDependencyName + "\n")
             makefile.write("\tRAW_SRC=$@;SRC_NOPREFIX=$${FOO#/};DRIVE=$${SRC_NOPREFIX%%/*};UNC_SRC=$${DRIVE}:/$${SRC_NOPREFIX#*/};")
             makefile.write("OUTPUT=\"$<\";export CYGWIN=nodosfilewarning;SOURCEFILE=\"$*\";OBJFILE=\"$${SOURCEFILE%.*}\"" + objSuffix + ";makedepend -f-")
             makefile.write(" -I" + ctx2_common.privIncPathForSourceFile(sourceDependencyName) + " -I\"$(ADDINC)\" -I\"$(LINKHEADERS)\" $< 2>/dev/null | sed \"s,.*:,\\$$(OBJDIR)/$${SOURCEFILE##*/}" + objSuffix + ":,\" > $(DEPDIR)/$${OUTPUT##*/}.d\n")
@@ -367,16 +367,16 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
                 else:
                     subCommandLine = "\t" + subCxxCommandLine
 
-                subCommandLine = subCommandLine.replace("%INCPATHS", subIncPrefix + "$(ADDINC)" + subIncSuffix + " " + subIncPrefix + ctx2_common.privIncPathForSourceFile(sourceDependencyName) + subIncSuffix + " " + subIncPrefix + "$(LINKHEADERS)" + subIncSuffix)
+                subCommandLine = subCommandLine.replace("%INCPATHS", subIncPrefix + "$(ADDINC)" + subIncSuffix + " " + subIncPrefix + ctx2_common.privIncPathForSourceFile(sourceDependencyName) + subIncSuffix + " " + subIncPrefix + "$${RAW_LINKHEADERS/\/cygdrive\/C/c:}" + subIncSuffix)
                 subCommandLine = subCommandLine.replace('%CPPDEFINES','$(SUB_PREP_DEFS)')
                 makefile.write(subCommandLine)
             else:
                 if sourceDependencyName[-len(cxxFileSuffix):] == cxxFileSuffix:
-                    commandLine = "\t" + ccCommandLine
+                    commandLine = "\tRAW_SRC=\"$<\"; RAW_OBJ=\"$@\"; RAW_LINKHEADERS=\"$(LINKHEADERS)\"; RAW_PRIVHEADERS=\"$(CYGPREFIX)" + ctx2_common.privIncPathForSourceFile(sourceDependencyName) + "\"; " + ccCommandLine
                 else:
-                    commandLine = "\t" + ccCommandLine
+                    commandLine = "\tRAW_SRC=\"$<\"; RAW_OBJ=\"$@\"; RAW_LINKHEADERS=\"$(LINKHEADERS)\"; RAW_PRIVHEADERS=\"$(CYGPREFIX)" + ctx2_common.privIncPathForSourceFile(sourceDependencyName) + "\"; " + ccCommandLine
 
-                commandLine = commandLine.replace("%INCPATHS", incPrefix + "$(ADDINC)" + incSuffix + " " + incPrefix + ctx2_common.privIncPathForSourceFile(sourceDependencyName) + incSuffix + " " + incPrefix + "$(LINKHEADERS)" + incSuffix)
+                commandLine = commandLine.replace("%INCPATHS", incPrefix + "$(ADDINC)" + incSuffix + " " + incPrefix + "$${RAW_PRIVHEADERS/\/cygdrive\/C/c:}" + incSuffix + " " + incPrefix + "$${RAW_LINKHEADERS/\/cygdrive\/C/c:}" + incSuffix)
                 commandLine = commandLine.replace("%CPPDEFINES","$(PREP_DEFS)")
                 makefile.write(commandLine)
             makefile.write("\n")
