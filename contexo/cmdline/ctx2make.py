@@ -124,6 +124,9 @@ def main(argv):
             if arg == '-t':
                 buildTests = True
                 continue
+            if arg == '-o':
+                nextArgIsOutputDir = True
+                continue
             if arg == '-l':
                 linkHeaders = True
                 continue
@@ -247,11 +250,9 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
         cfgmakefile.write("ADDFLAGS=\n")
         cfgmakefile.write("\n")
         cfgmakefile.write("AR=" + bc.getCompiler().cdef['AR'] + "\n")
-        cfgmakefile.write("RANLIB=" "\n")
+        cfgmakefile.write("RANLIB=" + bc.getCompiler().cdef['RANLIB'] + "\n")
         cfgmakefile.write("\n")
-        if viewDir[0] != "/":
-            viewDir = "/" + viewDir.replace(":","")
-        cfgmakefile.write("OUTPUT=$(CYGPREFIX)" + viewDir + '/' + "output\n")
+        cfgmakefile.write("OUTPUT=" + outputDir + os.sep + "output\n")
         cfgmakefile.write("LIBDIR=$(OUTPUT)/lib\n")
         cfgmakefile.write("OBJDIR=$(OUTPUT)/obj\n")
         cfgmakefile.write("HDRDIR=$(OUTPUT)/inc\n")
@@ -346,6 +347,14 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
             makefile.write(" $(OBJDIR)/" + posixpath.basename(baseName) + objSuffix)
         makefile.write("\n")
         libraryBuildRules.append(libraryBuildRule)
+        makefile.write("\t$(AR) r $@ ")
+        for sourceDependency in librarySources[library]:
+            sourceDependencyName = ctx2_common.winPathToMsys(sourceDependency)
+            basePath, ext = posixpath.splitext(sourceDependencyName)
+            makefile.write(" $(OBJDIR)/" + posixpath.basename(basePath) + objSuffix)
+        makefile.write("\n")
+        makefile.write("\t$(RANLIB) $@\n")
+    
     makefile.write("\n")
     makefile.write(".PHONY: all\n")
     makefile.write("all: ")
@@ -387,7 +396,6 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
                 commandLine = commandLine.replace("%CPPDEFINES","$(PREP_DEFS)")
                 makefile.write(commandLine)
             makefile.write("\n")
-
     makefile.write("-include \"$(DEPDIR)\"/*.d\n")
     makefile.write("\n")
 
@@ -426,10 +434,10 @@ def genMakefile(outputDir = str(), viewDir = str(), envFile = str(), bcFile = st
     librarySources, includes = ctx2_common.parseComps(cview, view_dir, buildTests, bc, components)
 
     if linkHeaders:
-        dest = 'output' + '/' + 'linkheaders'
+        dest = outputDir + os.sep + 'output' + os.sep + 'linkheaders'
         ctx2_common.linkIncludes(includes, dest, view_dir)
 
-    writeMakefile(librarySources = librarySources, includes = includes, linkHeaders = linkHeaders, bc = bc, viewDir = view_dir, assignCC = assignCC, addInc = addInc)
+    writeMakefile(outputDir = outputDir, librarySources = librarySources, includes = includes, linkHeaders = linkHeaders, bc = bc, viewDir = view_dir, assignCC = assignCC, addInc = addInc)
 
     if envFile != "":
         switchEnvironment(oldEnv, False)
