@@ -168,6 +168,9 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
     cxx = bc.getCompiler().cdef['CXX']
     ccCommandLine = bc.getCompiler().cdef['CCCOM']
     cxxCommandLine = bc.getCompiler().cdef['CXXCOM']
+    cxxCommandLine = ccCommandLine.replace('%CXX', '$(CXX)')
+    cxxCommandLine = ccCommandLine.replace('%CXXFLAGS', '$(CXXFLAGS)')
+    cxxCommandLine = ccCommandLine.replace('%CFLAGS', '$(CFLAGS)')
 
     cxxFileSuffix = bc.getCompiler().cdef['CXXFILESUFFIX']
 
@@ -189,12 +192,16 @@ def writeMakefile(outputDir = str(), librarySources = dict(), includes = list(),
         subCxxCommandLine = subCxxCommandLine.replace('%CXXFLAGS', '$('+ subBCName.upper() + '_CXXFLAGS) $(ADDFLAGS)')
         subCcCommandLine = subCcCommandLine.replace('%CC', '$(' + subBCName.upper() + '_CC)')
         subCcCommandLine = subCcCommandLine.replace("%SOURCES", "$${RAW_SRC/\/cygdrive\/C/c:}")
+        subCxxCommandLine = subCxxCommandLine.replace("%SOURCES", "$${RAW_SRC/\/cygdrive\/C/c:}")
         subCcCommandLine = subCcCommandLine.replace("%TARGET", "$${RAW_OBJ/\/cygdrive\/C/c:}")
+        subCxxCommandLine = subCxxCommandLine.replace("%TARGET", "$${RAW_OBJ/\/cygdrive\/C/c:}")
         subCcCommandLine = subCcCommandLine.replace("%INCPATHS", subIncPrefix +  "$${RAW_LINKHEADERS/\/cygdrive\/C/c:}" + subIncSuffix)
         subCcCommandLine = subCcCommandLine.replace('\\','/')
         subCxx = subBCObject.getCompiler().cdef['CXX']
         subCxxCommandLine = subBCObject.getCompiler().cdef['CXXCOM']
         subCxxFileSuffix = subBCObject.getCompiler().cdef['CXXFILESUFFIX']
+        subCxxCommandLine = subCxxCommandLine.replace('%CFLAGS', '$(CFLAGS)')
+        subCxxCommandLine = subCxxCommandLine.replace('%CXX', '$(' + subBCName.upper() + '_CXX)')
 
         break
     if not posixpath.isfile(outputDir + "Makefile.inc"):
